@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'components/button.dart';
 import 'components/empy_board.dart';
+import 'components/score_board.dart';
 import 'components/tile_board.dart';
 import 'const/colors.dart';
 import 'managers/board.dart';
@@ -116,44 +117,55 @@ class _GameState extends State<Game>
                           ),
                         ],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            LocaleKeys.app_name.tr(),
-                            style: TextStyle(
-                              color: colorApp.text,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 52.0,
-                            ),
-                          ),
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ButtonWidget(
-                                icon: Icons.refresh,
-                                onPressed: () {
-                                  context.read<BoardManager>().newGame();
-                                },
+                              Text(
+                                LocaleKeys.app_name.tr(),
+                                style: TextStyle(
+                                  color: colorApp.text,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 52.0,
+                                ),
                               ),
-                              ButtonWidget(
-                                icon: Icons.settings,
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const SettingsScreen(),
-                                    ),
-                                  );
-                                },
+                              Wrap(
+                                spacing: 12,
+                                runSpacing: 12,
+                                children: [
+                                  ButtonWidget(
+                                    icon: Icons.refresh,
+                                    onPressed: () {
+                                      context.read<BoardManager>().newGame();
+                                    },
+                                  ),
+                                  ButtonWidget(
+                                    icon: Icons.settings,
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const SettingsScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
+                          ),
+                          const SizedBox(height: 10),
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: ScoreBoard(),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32.0),
+                  const Spacer(),
                   Stack(
                     children: [
                       const EmptyBoardWidget(),
@@ -163,6 +175,7 @@ class _GameState extends State<Game>
                       ),
                     ],
                   ),
+                  const Spacer(),
                 ],
               ),
             ),
