@@ -158,7 +158,7 @@ class _TopScoreHeader extends StatelessWidget {
                   LocaleKeys.top_score.tr(),
                   style: TextStyle(
                     color: colorApp.textWhite,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     fontSize: 16,
                   ),
                 ),
@@ -167,7 +167,7 @@ class _TopScoreHeader extends StatelessWidget {
                   '${entries.first.score}',
                   style: TextStyle(
                     color: colorApp.textWhite,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     fontSize: 34,
                   ),
                 ),
@@ -182,7 +182,7 @@ class _TopScoreHeader extends StatelessWidget {
                 style: TextStyle(
                   color: colorApp.textWhite.withValues(alpha: 0.86),
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               Text(
@@ -190,7 +190,7 @@ class _TopScoreHeader extends StatelessWidget {
                 style: TextStyle(
                   color: colorApp.textWhite,
                   fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ],
@@ -243,7 +243,7 @@ class _HistoryTile extends StatelessWidget {
                     '#$rank',
                     style: TextStyle(
                       color: colorApp.textWhite,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
@@ -257,7 +257,7 @@ class _HistoryTile extends StatelessWidget {
                       '${entry.score}',
                       style: TextStyle(
                         color: colorApp.text,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w900,
                         fontSize: 24,
                       ),
                     ),
@@ -309,7 +309,7 @@ class _EmptyHistory extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: colorApp.text,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w900,
                 fontSize: 22,
               ),
             ),

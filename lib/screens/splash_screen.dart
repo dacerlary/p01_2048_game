@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../components/app_title.dart';
 import '../const/colors.dart';
 import '../resource/resource.dart';
 
@@ -42,25 +43,11 @@ class SplashScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Text(
-                    LocaleKeys.app_name.tr(),
-                    style: TextStyle(
-                      color: colorApp.textWhite,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: AppTitle(text: LocaleKeys.app_name.tr(), fontSize: 34),
                 ),
               ),
               const SizedBox(height: 28),
-              Text(
-                LocaleKeys.app_name.tr(),
-                style: TextStyle(
-                  color: colorApp.text,
-                  fontSize: 42,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              AppTitle(text: LocaleKeys.app_name.tr(), fontSize: 46),
               const SizedBox(height: 12),
               Text(
                 LocaleKeys.splash_tagline.tr(),
@@ -68,7 +55,7 @@ class SplashScreen extends StatelessWidget {
                 style: TextStyle(
                   color: colorApp.score,
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 32),

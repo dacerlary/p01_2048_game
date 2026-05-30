@@ -185,7 +185,7 @@ class _TileThemeTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: colorApp.text,
-                fontWeight: selected ? FontWeight.bold : FontWeight.w600,
+                fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
               ),
             ),
           ],
@@ -253,10 +253,10 @@ class _BackgroundOptionTile extends StatelessWidget {
               height: 72,
               decoration: BoxDecoration(
                 color: option.color,
-                image: option.imageUrl == null
+                image: option.imageAsset == null
                     ? null
                     : DecorationImage(
-                        image: NetworkImage(option.imageUrl!),
+                        image: AssetImage(option.imageAsset!),
                         fit: BoxFit.cover,
                       ),
                 borderRadius: BorderRadius.circular(8),
@@ -278,7 +278,7 @@ class _BackgroundOptionTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: colorApp.text,
-                fontWeight: selected ? FontWeight.bold : FontWeight.w600,
+                fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
               ),
             ),
           ],
@@ -309,7 +309,7 @@ class _Section extends StatelessWidget {
             title,
             style: TextStyle(
               color: colorApp.text,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
               fontSize: 18,
             ),
           ),
@@ -366,7 +366,7 @@ class _SettingsTile extends StatelessWidget {
                         title,
                         style: TextStyle(
                           color: colorApp.text,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           fontSize: 17,
                         ),
                       ),

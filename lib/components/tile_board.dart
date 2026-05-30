@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../const/board_layout.dart';
 import '../const/colors.dart';
 import '../managers/board.dart';
 import '../managers/settings.dart';
@@ -34,8 +35,9 @@ class TileBoardWidget extends StatelessWidget {
       ),
     );
 
+    const gap = BoardLayout.gap;
     final sizePerTile = (size / 4).floorToDouble();
-    final tileSize = sizePerTile - 12.0 - (12.0 / 4);
+    final tileSize = sizePerTile - gap - (gap / 4);
     final boardSize = sizePerTile * 4;
     return SizedBox(
       width: boardSize,
@@ -44,6 +46,11 @@ class TileBoardWidget extends StatelessWidget {
         children: [
           ...List.generate(board.tiles.length, (i) {
             var tile = board.tiles[i];
+            final tileColor =
+                tileTheme.colors[tile.value] ??
+                colorApp.tileColors[tile.value] ??
+                colorApp.tile2048;
+            final textColor = _textColorForTile(tileColor);
 
             return AnimatedTile(
               key: ValueKey(tile.id),
@@ -55,27 +62,36 @@ class TileBoardWidget extends StatelessWidget {
                 width: tileSize,
                 height: tileSize,
                 decoration: BoxDecoration(
-                  color:
-                      tileTheme.colors[tile.value] ??
-                      colorApp.tileColors[tile.value],
+                  color: tileColor,
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: colorApp.text.withValues(alpha: 0.08),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
+                      color: colorApp.text.withValues(alpha: 0.18),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
                     ),
                   ],
+                  border: Border.all(
+                    color: colorApp.textWhite.withValues(alpha: 0.82),
+                    width: 2,
+                  ),
                 ),
                 child: Center(
                   child: Text(
                     '${tile.value}',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0,
-                      color: tile.value < 8
-                          ? colorApp.text
-                          : colorApp.textWhite,
+                      fontWeight: FontWeight.w900,
+                      fontSize: tile.value < 1000 ? 30.0 : 24.0,
+                      color: textColor,
+                      shadows: [
+                        Shadow(
+                          color: textColor == colorApp.text
+                              ? colorApp.textWhite.withValues(alpha: 0.42)
+                              : colorApp.text.withValues(alpha: 0.28),
+                          blurRadius: 2,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -127,7 +143,7 @@ class TileBoardWidget extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: colorApp.text,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           fontSize: 38.0,
                         ),
                       ),
@@ -136,7 +152,7 @@ class TileBoardWidget extends StatelessWidget {
                         LocaleKeys.final_score.tr(args: ['${board.score}']),
                         style: TextStyle(
                           color: colorApp.text,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                           fontSize: 20,
                         ),
                       ),
@@ -155,5 +171,11 @@ class TileBoardWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _textColorForTile(Color tileColor) {
+    return tileColor.computeLuminance() > 0.48
+        ? colorApp.text
+        : colorApp.textWhite;
   }
 }

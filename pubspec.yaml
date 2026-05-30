@@ -23,7 +23,6 @@ dependencies:
   uuid: ^3.0.6
   sprintf: ^7.0.0
 
-  flutter_swipe_detector: ^2.0.0
   flutter_svg: ^2.2.0
   easy_localization: ^3.0.7
   url_launcher: ^6.3.1
@@ -55,3 +54,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/locale/
+    - assets/images/

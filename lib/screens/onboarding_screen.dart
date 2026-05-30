@@ -23,19 +23,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       icon: Icons.grid_4x4,
       titleKey: LocaleKeys.onboarding_title_game,
       descriptionKey: LocaleKeys.onboarding_description_game,
-      imageUrl: AppImages.onboardingPuzzle,
+      imageAsset: AppImages.onboardingPuzzle,
     ),
     _OnboardingPageData(
       icon: Icons.swipe,
       titleKey: LocaleKeys.onboarding_title_swipe,
       descriptionKey: LocaleKeys.onboarding_description_swipe,
-      imageUrl: AppImages.onboardingSwipe,
+      imageAsset: AppImages.onboardingSwipe,
     ),
     _OnboardingPageData(
       icon: Icons.emoji_events,
       titleKey: LocaleKeys.onboarding_title_records,
       descriptionKey: LocaleKeys.onboarding_description_records,
-      imageUrl: AppImages.onboardingTrophy,
+      imageAsset: AppImages.onboardingTrophy,
     ),
   ];
 
@@ -104,7 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: colorApp.text,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               fontSize: 36,
                             ),
                           ),
@@ -115,6 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             style: TextStyle(
                               color: colorApp.text,
                               fontSize: 18,
+                              fontWeight: FontWeight.w700,
                               height: 1.35,
                             ),
                           ),
@@ -160,7 +161,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ? LocaleKeys.start.tr()
                         : LocaleKeys.continue_button.tr(),
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                       fontSize: 18,
                     ),
                   ),
@@ -200,8 +201,8 @@ class _OnboardingImage extends StatelessWidget {
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Image.network(
-            page.imageUrl,
+          child: Image.asset(
+            page.imageAsset,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Center(
@@ -212,7 +213,7 @@ class _OnboardingImage extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorApp.text,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
@@ -252,11 +253,11 @@ class _OnboardingPageData {
     required this.icon,
     required this.titleKey,
     required this.descriptionKey,
-    required this.imageUrl,
+    required this.imageAsset,
   });
 
   final IconData icon;
   final String titleKey;
   final String descriptionKey;
-  final String imageUrl;
+  final String imageAsset;
 }

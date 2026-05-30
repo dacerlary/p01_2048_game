@@ -1,18 +1,19 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
+
+import '../models/game_direction.dart';
 
 class NextDirectionManager extends ChangeNotifier {
-  SwipeDirection? _state;
+  GameDirection? _state;
 
-  SwipeDirection? get state => _state;
+  GameDirection? get state => _state;
 
-  set state(SwipeDirection? value) {
+  set state(GameDirection? value) {
     if (_state == value) return;
     _state = value;
     notifyListeners();
   }
 
-  void queue(SwipeDirection direction) {
+  void queue(GameDirection direction) {
     state = direction;
   }
 

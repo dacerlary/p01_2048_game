@@ -9,20 +9,20 @@ class GameBackgroundOption {
     required this.id,
     required this.labelKey,
     required this.color,
-  }) : imageUrl = null;
+  }) : imageAsset = null;
 
   const GameBackgroundOption.image({
     required this.id,
     required this.labelKey,
-    required this.imageUrl,
+    required this.imageAsset,
   }) : color = null;
 
   final String id;
   final String labelKey;
   final Color? color;
-  final String? imageUrl;
+  final String? imageAsset;
 
-  bool get isImage => imageUrl != null;
+  bool get isImage => imageAsset != null;
 }
 
 class GameBackgroundOptions {
@@ -54,17 +54,17 @@ class GameBackgroundOptions {
     const GameBackgroundOption.image(
       id: 'candy',
       labelKey: LocaleKeys.background_candy,
-      imageUrl: AppImages.backgroundCandy,
+      imageAsset: AppImages.backgroundCandy,
     ),
     const GameBackgroundOption.image(
       id: 'clouds',
       labelKey: LocaleKeys.background_clouds,
-      imageUrl: AppImages.backgroundClouds,
+      imageAsset: AppImages.backgroundClouds,
     ),
     const GameBackgroundOption.image(
       id: 'balloons',
       labelKey: LocaleKeys.background_balloons,
-      imageUrl: AppImages.backgroundBalloons,
+      imageAsset: AppImages.backgroundBalloons,
     ),
   ];
 

@@ -1,12 +1,12 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/tile.dart';
 import '../models/board.dart';
+import '../models/game_direction.dart';
 
 import 'next_direction.dart';
 import 'round.dart';
@@ -39,6 +39,7 @@ class BoardManager extends ChangeNotifier {
   void load() async {
     var box = await Hive.openBox<Board>('boardBox');
     state = box.get(0) ?? _newGame();
+    _hasSavedCurrentScore = state.over && state.score > 0;
   }
 
   int maxScore() {
@@ -63,10 +64,9 @@ class BoardManager extends ChangeNotifier {
   }
 
   Tile _calculate(Tile tile, List<Tile> tiles, direction) {
-    bool asc =
-        direction == SwipeDirection.left || direction == SwipeDirection.up;
+    bool asc = direction == GameDirection.left || direction == GameDirection.up;
     bool vert =
-        direction == SwipeDirection.up || direction == SwipeDirection.down;
+        direction == GameDirection.up || direction == GameDirection.down;
     int index = vert ? verticalOrder[tile.index] : tile.index;
     int nextIndex = ((index + 1) / 4).ceil() * 4 - (asc ? 4 : 1);
 
@@ -84,43 +84,52 @@ class BoardManager extends ChangeNotifier {
     );
   }
 
-  bool move(SwipeDirection direction) {
+  bool move(GameDirection direction) {
     if (state.over) {
       return false;
     }
 
-    bool asc =
-        direction == SwipeDirection.left || direction == SwipeDirection.up;
+    bool asc = direction == GameDirection.left || direction == GameDirection.up;
     bool vert =
-        direction == SwipeDirection.up || direction == SwipeDirection.down;
-    state.tiles.sort(
-      ((a, b) =>
-          (asc ? 1 : -1) *
-          (vert
-              ? verticalOrder[a.index].compareTo(verticalOrder[b.index])
-              : a.index.compareTo(b.index))),
-    );
+        direction == GameDirection.up || direction == GameDirection.down;
+    final sortedTiles = [...state.tiles]
+      ..sort(
+        ((a, b) =>
+            (asc ? 1 : -1) *
+            (vert
+                ? verticalOrder[a.index].compareTo(verticalOrder[b.index])
+                : a.index.compareTo(b.index))),
+      );
 
     List<Tile> tiles = [];
+    var hasChanged = false;
 
-    for (int i = 0, l = state.tiles.length; i < l; i++) {
-      var tile = state.tiles[i];
+    for (int i = 0, l = sortedTiles.length; i < l; i++) {
+      var tile = sortedTiles[i];
 
       tile = _calculate(tile, tiles, direction);
+      if (tile.nextIndex != null && tile.nextIndex != tile.index) {
+        hasChanged = true;
+      }
       tiles.add(tile);
 
       if (i + 1 < l) {
-        var next = state.tiles[i + 1];
+        var next = sortedTiles[i + 1];
         if (tile.value == next.value) {
           var index = vert ? verticalOrder[tile.index] : tile.index,
               nextIndex = vert ? verticalOrder[next.index] : next.index;
           if (_inRange(index, nextIndex)) {
             tiles.add(next.copyWith(nextIndex: tile.nextIndex));
+            hasChanged = true;
             i += 1;
             continue;
           }
         }
       }
+    }
+
+    if (!hasChanged) {
+      return false;
     }
 
     state = state.copyWith(tiles: tiles, undo: state);
@@ -273,20 +282,19 @@ class BoardManager extends ChangeNotifier {
       return false;
     }
 
-    SwipeDirection? direction;
+    GameDirection? direction;
     if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-      direction = SwipeDirection.right;
+      direction = GameDirection.right;
     } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-      direction = SwipeDirection.left;
+      direction = GameDirection.left;
     } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      direction = SwipeDirection.up;
+      direction = GameDirection.up;
     } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      direction = SwipeDirection.down;
+      direction = GameDirection.down;
     }
 
     if (direction != null) {
-      move(direction);
-      return true;
+      return move(direction);
     }
     return false;
   }

@@ -54,18 +54,30 @@ class Score extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorApp.score,
         borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: colorApp.textWhite, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: colorApp.score.withValues(alpha: 0.28),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Text(
             label.toUpperCase(),
-            style: TextStyle(fontSize: 18.0, color: colorApp.scoreLabel),
+            style: TextStyle(
+              fontSize: 18.0,
+              color: colorApp.scoreLabel,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           Text(
             score,
             style: TextStyle(
               color: colorApp.textWhite,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
               fontSize: 18.0,
             ),
           ),
