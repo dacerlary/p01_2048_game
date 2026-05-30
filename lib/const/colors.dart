@@ -1,36 +1,45 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
-const backgroundColor = Color(0xfffaf8ef);
-const textColor = Color(0xff776e65);
-const textColorWhite = Color(0xfff9f6f2);
-const boardColor = Color(0xffbbada0);
-const emptyTileColor = Color(0xffcdc1b4);
-const buttonColor = Color(0xff8f7a66);
-const scoreColor = Color(0xffbbada0);
-const overlayColor = Color.fromRGBO(238, 228, 218, 0.73);
+final colorApp = ColorApp();
 
-const color2 = Color(0xffeee4da);
-const color4 = Color(0xffeee1c9);
-const color8 = Color(0xfff3b27a);
-const color16 = Color(0xfff69664);
-const color32 = Color(0xfff77c5f);
-const color64 = Color(0xfff75f3b);
-const color128 = Color(0xffedd073);
-const color256 = Color(0xffedcc62);
-const color512 = Color(0xffedc950);
-const color1024 = Color(0xffedc53f);
-const color2048 = Color(0xffedc22e);
+class ColorApp {
+  Color get background => const Color(0xFFFFF7FB);
+  Color get surface => const Color(0xFFFFFFFF);
+  Color get text => const Color(0xFF40263A);
+  Color get textWhite => const Color(0xFFFFFFFF);
+  Color get board => const Color(0xFFFF8FBD);
+  Color get emptyTile => const Color(0xFFFFD6E8);
+  Color get button => const Color(0xFFFF5CA8);
+  Color get score => const Color(0xFFFF7AB8);
+  Color get scoreLabel => const Color(0xFFFFF0F7);
+  Color get overlay => const Color(0xEFFFF7FB);
+  Color get accent => const Color(0xFFFFC857);
+  Color get mint => const Color(0xFF75E6D1);
+  Color get sky => const Color(0xFF8FD3FF);
 
-const tileColors = {
-  2: color2,
-  4: color4,
-  8: color8,
-  16: color16,
-  32: color32,
-  64: color64,
-  128: color128,
-  256: color256,
-  512: color512,
-  1024: color1024,
-  2048: color2048,
-};
+  Color get tile2 => const Color(0xFFFFE1EF);
+  Color get tile4 => const Color(0xFFFFC6E0);
+  Color get tile8 => const Color(0xFFFFD166);
+  Color get tile16 => const Color(0xFFFF9F6E);
+  Color get tile32 => const Color(0xFF8FE3CF);
+  Color get tile64 => const Color(0xFF57C7FF);
+  Color get tile128 => const Color(0xFFB693FF);
+  Color get tile256 => const Color(0xFFFF7AB8);
+  Color get tile512 => const Color(0xFFFF5C8A);
+  Color get tile1024 => const Color(0xFF7C5CFF);
+  Color get tile2048 => const Color(0xFFFFC857);
+
+  Map<int, Color> get tileColors => {
+    2: tile2,
+    4: tile4,
+    8: tile8,
+    16: tile16,
+    32: tile32,
+    64: tile64,
+    128: tile128,
+    256: tile256,
+    512: tile512,
+    1024: tile1024,
+    2048: tile2048,
+  };
+}

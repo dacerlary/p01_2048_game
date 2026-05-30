@@ -1,11 +1,15 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 
-/*
-A Notifier when a round starts, in order to prevent the next round starts before the current ends
-prevent's animation issues when user tries to move tiles too soon.
-*/
-class RoundManager extends StateNotifier<bool> {
-  RoundManager() : super(true);
+class RoundManager extends ChangeNotifier {
+  bool _state = true;
+
+  bool get state => _state;
+
+  set state(bool value) {
+    if (_state == value) return;
+    _state = value;
+    notifyListeners();
+  }
 
   void end() {
     state = true;
@@ -15,7 +19,3 @@ class RoundManager extends StateNotifier<bool> {
     state = false;
   }
 }
-
-final roundManager = StateNotifierProvider<RoundManager, bool>((ref) {
-  return RoundManager();
-});

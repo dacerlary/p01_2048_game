@@ -1,31 +1,39 @@
 import 'dart:math';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 
 import '../const/colors.dart';
 import '../managers/board.dart';
+import '../managers/settings.dart';
+import '../resource/resource.dart';
 
 import 'animated_tile.dart';
 import 'button.dart';
 
-class TileBoardWidget extends ConsumerWidget {
-  const TileBoardWidget(
-      {super.key, required this.moveAnimation, required this.scaleAnimation});
+class TileBoardWidget extends StatelessWidget {
+  const TileBoardWidget({
+    super.key,
+    required this.moveAnimation,
+    required this.scaleAnimation,
+  });
 
   final CurvedAnimation moveAnimation;
   final CurvedAnimation scaleAnimation;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final board = ref.watch(boardManager);
+  Widget build(BuildContext context) {
+    final board = context.watch<BoardManager>().state;
+    final tileTheme = context.watch<SettingsManager>().tileTheme;
 
-    //Decides the maximum size the Board can be based on the shortest size of the screen.
     final size = max(
-        290.0,
-        min((MediaQuery.of(context).size.shortestSide * 0.90).floorToDouble(),
-            460.0));
+      290.0,
+      min(
+        (MediaQuery.of(context).size.shortestSide * 0.90).floorToDouble(),
+        460.0,
+      ),
+    );
 
-    //Decide the size of the tile based on the size of the board minus the space between each tile.
     final sizePerTile = (size / 4).floorToDouble();
     final tileSize = sizePerTile - 12.0 - (12.0 / 4);
     final boardSize = sizePerTile * 4;
@@ -43,48 +51,107 @@ class TileBoardWidget extends ConsumerWidget {
               moveAnimation: moveAnimation,
               scaleAnimation: scaleAnimation,
               size: tileSize,
-              //In order to optimize performances and prevent unneeded re-rendering the actual tile is passed as child to the AnimatedTile
-              //as the tile won't change for the duration of the movement (apart from it's position)
               child: Container(
                 width: tileSize,
                 height: tileSize,
                 decoration: BoxDecoration(
-                    color: tileColors[tile.value],
-                    borderRadius: BorderRadius.circular(6.0)),
+                  color:
+                      tileTheme.colors[tile.value] ??
+                      colorApp.tileColors[tile.value],
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorApp.text.withValues(alpha: 0.08),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
                 child: Center(
-                    child: Text(
-                  '${tile.value}',
-                  style: TextStyle(
+                  child: Text(
+                    '${tile.value}',
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24.0,
-                      color: tile.value < 8 ? textColor : textColorWhite),
-                )),
+                      color: tile.value < 8
+                          ? colorApp.text
+                          : colorApp.textWhite,
+                    ),
+                  ),
+                ),
               ),
             );
           }),
           if (board.over)
             Positioned.fill(
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.86, end: 1),
+                duration: const Duration(milliseconds: 360),
+                curve: Curves.elasticOut,
+                builder: (context, value, child) {
+                  return Transform.scale(scale: value, child: child);
+                },
                 child: Container(
-              color: overlayColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    board.won ? 'You win!' : 'Game over!',
-                    style: const TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 64.0),
+                  decoration: BoxDecoration(
+                    color: colorApp.overlay,
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                  ButtonWidget(
-                    text: board.won ? 'New Game' : 'Try again',
-                    onPressed: () {
-                      ref.read(boardManager.notifier).newGame();
-                    },
-                  )
-                ],
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 86,
+                        height: 86,
+                        decoration: BoxDecoration(
+                          color: colorApp.accent,
+                          borderRadius: BorderRadius.circular(28),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorApp.button.withValues(alpha: 0.28),
+                              blurRadius: 18,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          board.won ? Icons.emoji_events : Icons.replay,
+                          color: colorApp.textWhite,
+                          size: 48,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        board.won
+                            ? LocaleKeys.you_win.tr()
+                            : LocaleKeys.game_over.tr(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: colorApp.text,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 38.0,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        LocaleKeys.final_score.tr(args: ['${board.score}']),
+                        style: TextStyle(
+                          color: colorApp.text,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      ButtonWidget(
+                        text: LocaleKeys.try_again.tr(),
+                        onPressed: () {
+                          context.read<BoardManager>().newGame();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ))
+            ),
         ],
       ),
     );

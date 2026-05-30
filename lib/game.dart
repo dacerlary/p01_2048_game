@@ -1,55 +1,56 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
+import 'package:provider/provider.dart';
 
 import 'components/button.dart';
 import 'components/empy_board.dart';
-import 'components/score_board.dart';
 import 'components/tile_board.dart';
 import 'const/colors.dart';
 import 'managers/board.dart';
+import 'resource/resource.dart';
+import 'screens/settings_screen.dart';
 
-class Game extends ConsumerStatefulWidget {
+class Game extends StatefulWidget {
   const Game({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _GameState();
+  State<Game> createState() => _GameState();
 }
 
-class _GameState extends ConsumerState<Game>
+class _GameState extends State<Game>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  //The contoller used to move the the tiles
-  late final AnimationController _moveController = AnimationController(
-    duration: const Duration(milliseconds: 100),
-    vsync: this,
-  )..addStatusListener((status) {
-      //When the movement finishes merge the tiles and start the scale animation which gives the pop effect.
-      if (status == AnimationStatus.completed) {
-        ref.read(boardManager.notifier).merge();
-        _scaleController.forward(from: 0.0);
-      }
-    });
+  final FocusNode _keyboardFocusNode = FocusNode();
+  Offset _dragDelta = Offset.zero;
 
-  //The curve animation for the move animation controller.
+  late final AnimationController _moveController =
+      AnimationController(
+        duration: const Duration(milliseconds: 100),
+        vsync: this,
+      )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          context.read<BoardManager>().merge();
+          _scaleController.forward(from: 0.0);
+        }
+      });
+
   late final CurvedAnimation _moveAnimation = CurvedAnimation(
     parent: _moveController,
     curve: Curves.easeInOut,
   );
 
-  //The contoller used to show a popup effect when the tiles get merged
-  late final AnimationController _scaleController = AnimationController(
-    duration: const Duration(milliseconds: 200),
-    vsync: this,
-  )..addStatusListener((status) {
-      //When the scale animation finishes end the round and if there is a queued movement start the move controller again for the next direction.
-      if (status == AnimationStatus.completed) {
-        if (ref.read(boardManager.notifier).endRound()) {
-          _moveController.forward(from: 0.0);
+  late final AnimationController _scaleController =
+      AnimationController(
+        duration: const Duration(milliseconds: 200),
+        vsync: this,
+      )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          if (context.read<BoardManager>().endRound()) {
+            _moveController.forward(from: 0.0);
+          }
         }
-      }
-    });
+      });
 
-  //The curve animation for the scale animation controller.
   late final CurvedAnimation _scaleAnimation = CurvedAnimation(
     parent: _scaleController,
     curve: Curves.easeInOut,
@@ -57,92 +58,114 @@ class _GameState extends ConsumerState<Game>
 
   @override
   void initState() {
-    //Add an Observer for the Lifecycles of the App
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
+    return KeyboardListener(
       autofocus: true,
-      focusNode: FocusNode(),
-      onKey: (RawKeyEvent event) {
-        //Move the tile with the arrows on the keyboard on Desktop
-        if (ref.read(boardManager.notifier).onKey(event)) {
+      focusNode: _keyboardFocusNode,
+      onKeyEvent: (KeyEvent event) {
+        if (context.read<BoardManager>().onKey(event)) {
           _moveController.forward(from: 0.0);
         }
       },
-      child: SwipeDetector(
-        onSwipe: (direction, offset) {
-          if (ref.read(boardManager.notifier).move(direction)) {
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onPanStart: (_) => _dragDelta = Offset.zero,
+        onPanUpdate: (details) => _dragDelta += details.delta,
+        onPanEnd: (_) {
+          final direction = _swipeDirectionFromDelta(_dragDelta);
+          if (direction != null &&
+              context.read<BoardManager>().move(direction)) {
             _moveController.forward(from: 0.0);
           }
         },
         child: Scaffold(
-          backgroundColor: backgroundColor,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '2048',
-                      style: TextStyle(
-                          color: textColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 52.0),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const ScoreBoard(),
-                        const SizedBox(
-                          height: 32.0,
-                        ),
-                        Row(
-                          children: [
-                            ButtonWidget(
-                              icon: Icons.undo,
-                              onPressed: () {
-                                //Undo the round.
-                                ref.read(boardManager.notifier).undo();
-                              },
-                            ),
-                            const SizedBox(
-                              width: 16.0,
-                            ),
-                            ButtonWidget(
-                              icon: Icons.refresh,
-                              onPressed: () {
-                                //Restart the game
-                                ref.read(boardManager.notifier).newGame();
-                              },
-                            )
-                          ],
-                        )
-                      ],
-                    )
-                  ],
-                ),
+          backgroundColor: colorApp.background,
+          body: AnimatedContainer(
+            duration: const Duration(milliseconds: 360),
+            curve: Curves.easeOut,
+            decoration: BoxDecoration(
+              color: colorApp.background,
+              gradient: LinearGradient(
+                colors: [colorApp.background, colorApp.emptyTile],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              const SizedBox(
-                height: 32.0,
-              ),
-              Stack(
+            ),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const EmptyBoardWidget(),
-                  TileBoardWidget(
-                      moveAnimation: _moveAnimation,
-                      scaleAnimation: _scaleAnimation)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: colorApp.surface.withValues(alpha: 0.86),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorApp.button.withValues(alpha: 0.14),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            LocaleKeys.app_name.tr(),
+                            style: TextStyle(
+                              color: colorApp.text,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 52.0,
+                            ),
+                          ),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              ButtonWidget(
+                                icon: Icons.refresh,
+                                onPressed: () {
+                                  context.read<BoardManager>().newGame();
+                                },
+                              ),
+                              ButtonWidget(
+                                icon: Icons.settings,
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const SettingsScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32.0),
+                  Stack(
+                    children: [
+                      const EmptyBoardWidget(),
+                      TileBoardWidget(
+                        moveAnimation: _moveAnimation,
+                        scaleAnimation: _scaleAnimation,
+                      ),
+                    ],
+                  ),
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),
@@ -151,23 +174,33 @@ class _GameState extends ConsumerState<Game>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    //Save current state when the app becomes inactive
     if (state == AppLifecycleState.inactive) {
-      ref.read(boardManager.notifier).save();
+      context.read<BoardManager>().save();
     }
     super.didChangeAppLifecycleState(state);
   }
 
   @override
   void dispose() {
-    //Remove the Observer for the Lifecycles of the App
     WidgetsBinding.instance.removeObserver(this);
 
-    //Dispose the animations.
     _moveAnimation.dispose();
     _scaleAnimation.dispose();
     _moveController.dispose();
     _scaleController.dispose();
+    _keyboardFocusNode.dispose();
     super.dispose();
+  }
+
+  SwipeDirection? _swipeDirectionFromDelta(Offset delta) {
+    const minSwipeDistance = 24.0;
+    if (delta.distance < minSwipeDistance) {
+      return null;
+    }
+
+    if (delta.dx.abs() > delta.dy.abs()) {
+      return delta.dx > 0 ? SwipeDirection.right : SwipeDirection.left;
+    }
+    return delta.dy > 0 ? SwipeDirection.down : SwipeDirection.up;
   }
 }

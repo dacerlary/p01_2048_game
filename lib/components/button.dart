@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../const/colors.dart';
 
-class ButtonWidget extends ConsumerWidget {
+class ButtonWidget extends StatelessWidget {
   const ButtonWidget(
       {super.key, this.text, this.icon, required this.onPressed});
 
@@ -12,14 +11,13 @@ class ButtonWidget extends ConsumerWidget {
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (icon != null) {
-      //Button Widget with icon for Undo and Restart Game button.
       return Container(
         decoration: BoxDecoration(
-            color: scoreColor, borderRadius: BorderRadius.circular(8.0)),
+            color: colorApp.score, borderRadius: BorderRadius.circular(8.0)),
         child: IconButton(
-            color: textColorWhite,
+            color: colorApp.textWhite,
             onPressed: onPressed,
             icon: Icon(
               icon,
@@ -27,12 +25,11 @@ class ButtonWidget extends ConsumerWidget {
             )),
       );
     }
-    //Button Widget with text for New Game and Try Again button.
     return ElevatedButton(
         style: ButtonStyle(
-            padding: MaterialStateProperty.all<EdgeInsets>(
-                const EdgeInsets.all(16.0)),
-            backgroundColor: MaterialStateProperty.all<Color>(buttonColor)),
+            padding:
+                WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(16.0)),
+            backgroundColor: WidgetStateProperty.all<Color>(colorApp.button)),
         onPressed: onPressed,
         child: Text(
           text!,

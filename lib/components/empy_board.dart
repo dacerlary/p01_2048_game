@@ -1,20 +1,24 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../const/colors.dart';
+import '../managers/settings.dart';
 
 class EmptyBoardWidget extends StatelessWidget {
   const EmptyBoardWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    //Decides the maximum size the Board can be based on the shortest size of the screen.
+    final background = context.watch<SettingsManager>().background;
     final size = max(
-        290.0,
-        min((MediaQuery.of(context).size.shortestSide * 0.90).floorToDouble(),
-            460.0));
+      290.0,
+      min(
+        (MediaQuery.of(context).size.shortestSide * 0.90).floorToDouble(),
+        460.0,
+      ),
+    );
 
-    //Decide the size of the tile based on the size of the board minus the space between each tile.
     final sizePerTile = (size / 4).floorToDouble();
     final tileSize = sizePerTile - 12.0 - (12.0 / 4);
     final boardSize = sizePerTile * 4;
@@ -22,10 +26,29 @@ class EmptyBoardWidget extends StatelessWidget {
       width: boardSize,
       height: boardSize,
       decoration: BoxDecoration(
-          color: boardColor, borderRadius: BorderRadius.circular(6.0)),
+        color: background.color ?? colorApp.board,
+        image: background.imageUrl == null
+            ? null
+            : DecorationImage(
+                image: NetworkImage(background.imageUrl!),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  colorApp.board.withValues(alpha: 0.18),
+                  BlendMode.lighten,
+                ),
+              ),
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: colorApp.button.withValues(alpha: 0.24),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: List.generate(16, (i) {
-          //Render the empty board in 4x4 GridView
           var x = ((i + 1) / 4).ceil();
           var y = x - 1;
 
@@ -40,8 +63,11 @@ class EmptyBoardWidget extends StatelessWidget {
               width: tileSize,
               height: tileSize,
               decoration: BoxDecoration(
-                  color: emptyTileColor,
-                  borderRadius: BorderRadius.circular(6.0)),
+                color: background.imageUrl == null
+                    ? colorApp.emptyTile
+                    : colorApp.textWhite.withValues(alpha: 0.78),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
           );
         }),
