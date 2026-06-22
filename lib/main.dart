@@ -24,7 +24,7 @@ void main() async {
     EasyLocalization(
       fallbackLocale: LanguageApp.en,
       path: 'assets/locale',
-      supportedLocales: LanguageApp.languageAppSupport,
+      supportedLocales: const [Locale("en")],
       useFallbackTranslations: true,
       child: MultiProvider(
         providers: [

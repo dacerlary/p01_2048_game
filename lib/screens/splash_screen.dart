@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../components/app_title.dart';
+import '../const/app_images.dart';
 import '../const/colors.dart';
 import '../resource/resource.dart';
 
@@ -25,16 +26,12 @@ class SplashScreen extends StatelessWidget {
                   return Transform.scale(scale: value, child: child);
                 },
                 child: Container(
-                  width: 128,
-                  height: 128,
-                  alignment: Alignment.center,
+                  width: 156,
+                  height: 156,
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [colorApp.button, colorApp.accent],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(32),
+                    color: colorApp.surface,
+                    borderRadius: BorderRadius.circular(38),
                     boxShadow: [
                       BoxShadow(
                         color: colorApp.button.withValues(alpha: 0.28),
@@ -43,7 +40,10 @@ class SplashScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: AppTitle(text: LocaleKeys.app_name.tr(), fontSize: 34),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: Image.asset(AppImages.appIcon, fit: BoxFit.cover),
+                  ),
                 ),
               ),
               const SizedBox(height: 28),

@@ -49,9 +49,6 @@ android {
     dependencies {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.16.1'
-        implementation "org.bytedeco:opencv:4.9.0-1.5.10:android-arm64"
-        implementation "org.bytedeco:opencv:4.9.0-1.5.10:android-x86_64"
-//        implementation "org.jtransforms:jtransforms:3.1"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:2.1.20"
     }
 

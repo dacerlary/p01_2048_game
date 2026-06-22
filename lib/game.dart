@@ -111,12 +111,21 @@ class _GameState extends State<Game>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            AppTitle(text: LocaleKeys.app_name.tr()),
-                            Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: AppTitle(
+                                    text: LocaleKeys.app_name.tr(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Row(
                               children: [
                                 ButtonWidget(
                                   icon: Icons.refresh,
@@ -124,6 +133,7 @@ class _GameState extends State<Game>
                                     context.read<BoardManager>().newGame();
                                   },
                                 ),
+                                const SizedBox(width: 12),
                                 ButtonWidget(
                                   icon: Icons.settings,
                                   onPressed: () {

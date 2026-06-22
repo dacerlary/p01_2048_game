@@ -15,7 +15,7 @@ class CodegenLoader extends AssetLoader {
   }
 
   static const Map<String, dynamic> _en = {
-    "app_name": "2048",
+    "app_name": "2048 Gamer",
     "system_default": "System default",
     "splash_tagline": "Ready to chase your high score",
     "score": "Score",
@@ -49,7 +49,7 @@ class CodegenLoader extends AssetLoader {
     "rate_us_subtitle": "Review this app",
     "feedback": "Feedback",
     "feedback_subtitle": "Send feedback by email",
-    "feedback_subject": "2048 Feedback",
+    "feedback_subject": "2048 Gamer Feedback",
     "link_open_error": "Unable to open this link.",
     "clear_score_history_title": "Clear all history?",
     "clear_score_history_message": "All high score history will be deleted.",

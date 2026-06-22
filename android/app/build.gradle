@@ -1,11 +1,24 @@
+import java.util.Properties
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def keyProperties = new Properties()
+def keyPropertiesFile = rootProject.file("key.properties")
+if (keyPropertiesFile.exists()) {
+    keyPropertiesFile.withInputStream { keyProperties.load(it) }
+}
+
+def releaseStoreFile = keyProperties.getProperty("storeFile") ?: System.getenv("ANDROID_KEYSTORE_PATH")
+def releaseStorePassword = keyProperties.getProperty("storePassword") ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+def releaseKeyAlias = keyProperties.getProperty("keyAlias") ?: System.getenv("ANDROID_KEY_ALIAS")
+def releaseKeyPassword = keyProperties.getProperty("keyPassword") ?: System.getenv("ANDROID_KEY_PASSWORD")
+
 android {
-    namespace "com.example.flutter_2048"
+    namespace "com.trungtv.play.game_2048"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -19,16 +32,27 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.flutter_2048"
+        applicationId "com.trungtv.play.game_2048"
         minSdk flutter.minSdkVersion
         targetSdk flutter.targetSdkVersion
         versionCode flutter.versionCode
         versionName flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            if (releaseStoreFile != null) {
+                storeFile file(releaseStoreFile)
+            }
+            storePassword releaseStorePassword
+            keyAlias releaseKeyAlias
+            keyPassword releaseKeyPassword
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
