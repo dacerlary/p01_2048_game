@@ -49,5 +49,7 @@
   "tile_theme_sweet": "Sweet",
   "tile_theme_bubblegum": "Bubblegum",
   "tile_theme_rainbow": "Rainbow",
-  "onboarding_image_error": "Add artwork here"
+  "onboarding_image_error": "Add artwork here",
+  "language": "Language",
+  "choose_language": "Choose language"
 }

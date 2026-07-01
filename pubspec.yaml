@@ -3,7 +3,7 @@ description: 2048 Game built using AnimatedWidget and Explicit Animations.
 
 publish_to: "none"
 
-version: 1.2.0+2
+version: 1.5.0+5
 
 environment:
   sdk: '>=3.8.0 <4.0.0'

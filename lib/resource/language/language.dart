@@ -13,7 +13,23 @@ class LanguageApp {
   static const Locale ja = Locale('ja');
   static const Locale ko = Locale('ko');
   static const Locale pt = Locale('pt');
-  static const List<Locale> supportedLocalesX = [en];
+  static const List<Locale> supportedLocalesX = [
+    en,
+    Locale('es'),
+    Locale('fr'),
+    Locale('it'),
+    Locale('de'),
+    pt,
+    Locale('ru'),
+    Locale('hi'),
+    Locale('ar'),
+    Locale('id'),
+    vi,
+    Locale('zh', 'CN'),
+    Locale('zh', 'TW'),
+    ja,
+    ko,
+  ];
 
   static const List<Locale> supportedLocales = [
     en,
@@ -133,8 +149,10 @@ class LanguageApp {
     SupportedLanguage("th", "ภาษาไทย"),
   ];
 
-  static List<Locale> get languageAppSupport =>
-      languageApp.map((e) => e.locale).toList();
+  static List<Locale> get languageAppSupport => languageApp
+      .where((e) => e.langCode != "none")
+      .map((e) => e.locale)
+      .toList();
 
   static List<SupportedLanguage> languageApp = [
     noneLanguage,
@@ -142,18 +160,17 @@ class LanguageApp {
     SupportedLanguage("es", "Español"),
     SupportedLanguage("fr", "Français"),
     SupportedLanguage("it", "Italiano"),
-    SupportedLanguage("de", "German"),
-    SupportedLanguage("es", "Spanish"),
-    SupportedLanguage("pt", "Portuguese"),
-    SupportedLanguage("ru", "Russian"),
-    SupportedLanguage("hi", "Hindi"),
-    SupportedLanguage("ar", "Arabic"),
-    SupportedLanguage("id", "Indonesia"),
+    SupportedLanguage("de", "Deutsch"),
+    SupportedLanguage("pt", "Português"),
+    SupportedLanguage("ru", "Русский"),
+    SupportedLanguage("hi", "हिंदी"),
+    SupportedLanguage("ar", "العربية"),
+    SupportedLanguage("id", "Bahasa Indonesia"),
     SupportedLanguage("vi", "Tiếng Việt"),
-    SupportedLanguage("zh-CN", "Chinese (Simplified)", "zh"),
-    SupportedLanguage("zh-TW", "Chinese (Traditional)", "zh_TW"),
-    SupportedLanguage("ja", "Japanese"),
-    SupportedLanguage("ko", "Korean"),
+    SupportedLanguage("zh-CN", "简体中文", "zh"),
+    SupportedLanguage("zh-TW", "繁體中文", "zh_TW"),
+    SupportedLanguage("ja", "日本語"),
+    SupportedLanguage("ko", "한국어"),
   ];
 
   static List<SupportedLanguage> allLanguage = [

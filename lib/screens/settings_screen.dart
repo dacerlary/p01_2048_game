@@ -27,6 +27,76 @@ class SettingsScreen extends StatelessWidget {
     await _launch(context, uri);
   }
 
+  Future<void> _openLanguagePicker(BuildContext context) async {
+    final currentLocale = context.locale;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: colorApp.textWhite,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  LocaleKeys.choose_language.tr(),
+                  style: TextStyle(
+                    color: colorApp.text,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: LanguageApp.languageApp
+                        .where((language) => language.langCode != 'none')
+                        .map((language) {
+                          final selected = language.locale == currentLocale;
+
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              language.name,
+                              style: TextStyle(
+                                color: colorApp.text,
+                                fontWeight: selected
+                                    ? FontWeight.w900
+                                    : FontWeight.w700,
+                              ),
+                            ),
+                            trailing: selected
+                                ? Icon(
+                                    Icons.check_circle,
+                                    color: colorApp.button,
+                                  )
+                                : null,
+                            onTap: () async {
+                              await context.setLocale(language.locale);
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            },
+                          );
+                        })
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _launch(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (!context.mounted) return;
@@ -82,6 +152,12 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _SettingsTile(
+            icon: Icons.language,
+            title: LocaleKeys.language.tr(),
+            subtitle: _languageNameFor(context.locale),
+            onTap: () => _openLanguagePicker(context),
+          ),
+          _SettingsTile(
             icon: Icons.history,
             title: LocaleKeys.score_history.tr(),
             subtitle: LocaleKeys.score_history_subtitle.tr(),
@@ -106,6 +182,16 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _languageNameFor(Locale locale) {
+    return LanguageApp.languageApp
+        .where((language) => language.langCode != 'none')
+        .firstWhere(
+          (language) => language.locale == locale,
+          orElse: () => LanguageApp.enLanguage,
+        )
+        .name;
   }
 }
 

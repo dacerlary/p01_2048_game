@@ -55,4 +55,6 @@ abstract class LocaleKeys {
   static const tile_theme_bubblegum = 'tile_theme_bubblegum';
   static const tile_theme_rainbow = 'tile_theme_rainbow';
   static const onboarding_image_error = 'onboarding_image_error';
+  static const language = 'language';
+  static const choose_language = 'choose_language';
 }
